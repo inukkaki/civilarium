@@ -5,6 +5,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 add_executable(test-fluid
     fluid.cpp
 
+    ../src/routine/event.cpp
+
     ../src/system/assert.cpp
     ../src/system/launch.cpp
     ../src/system/modal.cpp

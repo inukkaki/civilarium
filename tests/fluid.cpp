@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "routine/event.h"
 #include "system/launch.h"
 #include "time/framerate.h"
 
@@ -11,6 +12,7 @@
 
 namespace impl {
 
+namespace event = civilarium::routine::event;
 namespace launch = civilarium::system::launch;
 namespace framerate = civilarium::time::framerate;
 
@@ -20,6 +22,30 @@ inline constexpr float kWindowScale = 4.0f;
 
 inline constexpr int kFieldWidth = 256;
 inline constexpr int kFieldHeight = 128;
+
+void main_routine(SDL_Window* window, SDL_Renderer* renderer)
+{
+    // Frame rate
+    int frame_rate = 60;         // t -1
+    float dt = 1.0f/frame_rate;  // Frame duration / t
+
+    impl::framerate::FrameRateAdjuster fra(frame_rate);
+    impl::framerate::FrameRateMeasurer frm;
+    double measured_frame_rate = 0.0;
+
+    // Main routine
+    bool quits = false;
+    while (!quits) {
+        // Handle events
+        quits = impl::event::HandleEvents();
+
+        // Frame rate
+        if (frm.MeasureFrameRate(measured_frame_rate)) {
+            std::cout << "FPS: " << measured_frame_rate << std::endl;
+        }
+        fra.Adjust();
+    }
+}
 
 int main(int argc, char* argv[])
 {
@@ -39,25 +65,8 @@ int main(int argc, char* argv[])
         kWindowScale);
 
     // Main routine
-    impl::framerate::FrameRateAdjuster fra(60);
-    impl::framerate::FrameRateMeasurer frm;
-    double measured_frame_rate = 0.0;
-
     if (initializes_gui) {
-        // DEBUG
-        int count = 0;
-        while (true) {
-            if (count > 5) {
-                break;
-            }
-
-            // Frame rate
-            if (frm.MeasureFrameRate(measured_frame_rate)) {
-                std::cout << "FPS: " << measured_frame_rate << std::endl;
-                ++count;
-            }
-            fra.Adjust();
-        }
+        main_routine(window, renderer);
     }
 
     // Close the GUI
