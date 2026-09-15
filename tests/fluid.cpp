@@ -1,8 +1,10 @@
 #include <iostream>
+#include <vector>
 
 #include <SDL2/SDL.h>
 
 #include "routine/event.h"
+#include "system/assert.h"
 #include "system/launch.h"
 #include "time/framerate.h"
 
@@ -23,8 +25,41 @@ inline constexpr float kWindowScale = 4.0f;
 inline constexpr int kFieldWidth = 256;
 inline constexpr int kFieldHeight = 128;
 
+class Fluid {
+public:
+    Fluid(int width, int height) : w_(width + 1), h_(height + 1)
+    {
+        INUK_ASSERT(2 < w_);
+        INUK_ASSERT(2 < h_);
+        u_.assign(h_, std::vector<float>(w_, 0.0f));
+        v_.assign(h_, std::vector<float>(w_, 0.0f));
+        s_.assign(h_, std::vector<float>(w_, 0.0f));
+    }
+
+    void Integrate(float dt)
+    {
+        // NO-OP
+    }
+
+    void Simulate(float dt)
+    {
+        Integrate(dt);
+    }
+
+private:
+    int w_;
+    int h_;
+
+    std::vector<std::vector<float>> u_;  // Velocity
+    std::vector<std::vector<float>> v_;  // Velocity
+    std::vector<std::vector<float>> s_;
+};
+
 void main_routine(SDL_Window* window, SDL_Renderer* renderer)
 {
+    // Fluid
+    Fluid fluid(kFieldWidth, kFieldHeight);
+
     // Frame rate
     int frame_rate = 60;         // t -1
     float dt = 1.0f/frame_rate;  // Frame duration / t
