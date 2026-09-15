@@ -1,8 +1,11 @@
 #include <SDL2/SDL.h>
 
-#include "system/assert.h"
 #include "system/launch.h"
 #include "system/modal.h"
+
+#if (defined(__WIN32) || defined(__WIN64))
+    #include "system/winfunc.h"
+#endif
 
 namespace impl {
 
@@ -13,7 +16,10 @@ namespace modal = civilarium::system::modal;
 
 int main(int argc, char* argv[])
 {
-    INUK_ASSERT(0 == 1);
+    // Resolve the blurriness of the screen
+    #if (defined(__WIN32) || defined(__WIN64))
+        civilarium::system::winfunc::ResolveBlurriness();
+    #endif
 
     // Create the main window
     SDL_Window* window = nullptr;

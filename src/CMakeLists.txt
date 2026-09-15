@@ -8,6 +8,7 @@ add_executable(civilarium
     system/assert.cpp
     system/launch.cpp
     system/modal.cpp
+    system/winfunc.cpp
 )
 target_compile_features(civilarium PUBLIC cxx_std_23)
 target_include_directories(civilarium
