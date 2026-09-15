@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 
+#include "system/assert.h"
 #include "system/launch.h"
 #include "system/modal.h"
 
@@ -12,6 +13,8 @@ namespace modal = civilarium::system::modal;
 
 int main(int argc, char* argv[])
 {
+    INUK_ASSERT(0 == 1);
+
     // Create the main window
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
