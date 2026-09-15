@@ -5,6 +5,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 add_executable(test-fluid
     fluid.cpp
 
+    ../src/graphics/texture.cpp
+
+    ../src/math/epsilon.cpp
+    ../src/math/vector.cpp
+
     ../src/routine/event.cpp
 
     ../src/system/assert.cpp

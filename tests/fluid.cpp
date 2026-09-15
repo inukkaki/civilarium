@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "graphics/texture.h"
 #include "routine/event.h"
 #include "system/assert.h"
 #include "system/launch.h"
@@ -14,16 +15,22 @@
 
 namespace impl {
 
+namespace texture = civilarium::graphics::texture;
 namespace event = civilarium::routine::event;
 namespace launch = civilarium::system::launch;
 namespace framerate = civilarium::time::framerate;
 
 }  // namespace impl
 
-inline constexpr float kWindowScale = 4.0f;
+constexpr int kWindowBaseWidth = 128;
+constexpr int kWindowBaseHeight = 64;
+constexpr float kWindowScale = 4.0f;
 
-inline constexpr int kFieldWidth = 256;
-inline constexpr int kFieldHeight = 128;
+constexpr int kWindowWidth = kWindowScale*kWindowBaseWidth;
+constexpr int kWindowHeight = kWindowScale*kWindowBaseHeight;
+
+constexpr int kFieldWidth = 128;
+constexpr int kFieldHeight = 64;
 
 class Fluid {
 public:
@@ -60,6 +67,12 @@ void main_routine(SDL_Window* window, SDL_Renderer* renderer)
     // Fluid
     Fluid fluid(kFieldWidth, kFieldHeight);
 
+    // Graphics
+    impl::texture::Texture main_texture(renderer);
+    main_texture.CreateTexture(kWindowBaseWidth, kWindowBaseHeight);
+    impl::texture::RenderRect src_rect(
+        0, 0, kWindowBaseWidth, kWindowBaseHeight);
+
     // Frame rate
     int frame_rate = 60;         // t -1
     float dt = 1.0f/frame_rate;  // Frame duration / t
@@ -73,6 +86,16 @@ void main_routine(SDL_Window* window, SDL_Renderer* renderer)
     while (!quits) {
         // Handle events
         quits = impl::event::HandleEvents();
+
+        // Clear the main texture
+        main_texture.Clear(0x00, 0x00, 0x00, 0xff);
+
+        // Integrate the texture
+        // ...
+
+        // Update the window
+        main_texture.Render(nullptr, src_rect, 0.0f, 0.0f);
+        SDL_RenderPresent(renderer);
 
         // Frame rate
         if (frm.MeasureFrameRate(measured_frame_rate)) {
@@ -93,11 +116,8 @@ int main(int argc, char* argv[])
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
 
-    int window_width = static_cast<int>(kWindowScale*kFieldWidth);
-    int window_height = static_cast<int>(kWindowScale*kFieldHeight);
     bool initializes_gui = impl::launch::InitGui(
-        window, renderer, window_width, window_height, "fluid",
-        kWindowScale);
+        window, renderer, kWindowWidth, kWindowHeight, "fluid", kWindowScale);
 
     // Main routine
     if (initializes_gui) {
