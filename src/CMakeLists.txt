@@ -4,6 +4,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 # Target: civilarium
 add_executable(civilarium
     main.cpp
+
+    system/modal.cpp
 )
 target_compile_features(civilarium PUBLIC cxx_std_23)
 target_include_directories(civilarium
