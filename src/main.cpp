@@ -1,7 +1,9 @@
+#include <iostream>
+
 #include <SDL2/SDL.h>
 
 #include "system/launch.h"
-#include "system/modal.h"
+#include "time/framerate.h"
 
 #if (defined(__WIN32) || defined(__WIN64))
     #include "system/winfunc.h"
@@ -10,7 +12,7 @@
 namespace impl {
 
 namespace launch = civilarium::system::launch;
-namespace modal = civilarium::system::modal;
+namespace framerate = civilarium::time::framerate;
 
 }  // namespace impl
 
@@ -29,10 +31,25 @@ int main(int argc, char* argv[])
         window, renderer, 640, 480, "Civilarium", 2.0f);
 
     // Main routine
+    impl::framerate::FrameRateAdjuster fra(60);
+    impl::framerate::FrameRateMeasurer frm;
+    double measured_frame_rate = 0.0;
+
     if (initializes_gui) {
         // DEBUG
-        impl::modal::ShowErrorMessage(
-            "debug msg", "succeeded in initialization");
+        int count = 0;
+        while (true) {
+            if (count > 5) {
+                break;
+            }
+
+            // Frame rate
+            if (frm.MeasureFrameRate(measured_frame_rate)) {
+                std::cout << "FPS: " << measured_frame_rate << std::endl;
+                ++count;
+            }
+            fra.Adjust();
+        }
     }
 
     // Close the GUI
