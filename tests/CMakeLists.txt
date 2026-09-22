@@ -29,3 +29,10 @@ target_include_directories(test-fluid
 target_link_directories(test-fluid PUBLIC ${PATH_TO_SDL2}/lib)
 target_link_libraries(test-fluid PUBLIC ${SDL2_LIBS})
 target_compile_definitions(test-fluid PUBLIC USE_ASSERT_IN_GUI)
+
+# Target: omptest
+add_executable(test-omptest
+    omptest.cpp
+)
+target_compile_features(test-omptest PUBLIC cxx_std_23)
+target_compile_options(test-omptest PUBLIC -fopenmp)

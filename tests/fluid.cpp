@@ -116,8 +116,9 @@ public:
                     vv_[i][j + 1] += p*sx1;
                     vh_[i + 1][j] += p*sy1;
                 }
-
-                offset = (i + 1) % 2;
+            }
+            for (int i = 1; i < h_ - 1; ++i) {
+                int offset = (i + 1) % 2;
                 for (int j = 1 + offset; j < w_ - 1; j += 2) {
                     if (impl::epsilon::EqualsZero(s_[i][j])) {
                         continue;
@@ -301,7 +302,7 @@ public:
                 max_p = tmp_max;
             }
         }
-        std::cout << min_p << " ~ " << max_p << std::endl;
+        //std::cout << min_p << " ~ " << max_p << std::endl;
 
         for (int i = 0; i < h_; ++i) {
             for (int j = 0; j < w_; ++j) {
@@ -474,7 +475,7 @@ void main_routine(SDL_Window* window, SDL_Renderer* renderer)
         fluid.RenderPressure(p_texture);
         fluid.RenderSmoke(m_texture);
         fluid.RenderVelocity(v_texture);
-        p_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
+        //p_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
         m_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
         //v_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
 
