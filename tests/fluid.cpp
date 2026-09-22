@@ -457,7 +457,6 @@ void main_routine(SDL_Window* window, SDL_Renderer* renderer)
         SDL_RenderClear(renderer);
 
         main_texture.Clear(0x00, 0x00, 0x00, 0x00);
-        main_texture.Render(nullptr, src_rect, 0.0f, 0.0f);
 
         // Simulation
         fluid.Simulate(dt);
@@ -466,11 +465,12 @@ void main_routine(SDL_Window* window, SDL_Renderer* renderer)
         fluid.RenderPressure(p_texture);
         fluid.RenderSmoke(m_texture);
         fluid.RenderVelocity(v_texture);
-        p_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
-        //m_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
-        v_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
+        p_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
+        //m_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
+        v_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
 
         // Update the window
+        main_texture.Render(nullptr, src_rect, 0.0, 0.0);
         SDL_RenderPresent(renderer);
 
         // Frame rate

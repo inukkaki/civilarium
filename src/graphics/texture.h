@@ -43,8 +43,14 @@ public:
         SDL_Texture* target, const RenderRect& src,
         const RenderRect& dst) const;
     void Render(
-        SDL_Texture* target, const RenderRect& src,
-        double dst_x, double dst_y) const;
+        SDL_Texture* target, const RenderRect& src, double dst_x,
+        double dst_y) const;
+    void Render(
+        const Texture& target, const RenderRect& src,
+        const RenderRect& dst) const;
+    void Render(
+        const Texture& target, const RenderRect& src, double dst_x,
+        double dst_y) const;
 
     bool SetRenderTarget() const;
 

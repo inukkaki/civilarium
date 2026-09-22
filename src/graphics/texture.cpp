@@ -62,12 +62,26 @@ void Texture::Render(
 }
 
 void Texture::Render(
-    SDL_Texture* target, const RenderRect& src, double dst_x, double dst_y) const
+    SDL_Texture* target, const RenderRect& src, double dst_x,
+    double dst_y) const
 {
     RenderRect dst(
         static_cast<int>(dst_x + 0.5), static_cast<int>(dst_y + 0.5),
         src.w, src.h);
     Render(target, src, dst);
+}
+
+void Texture::Render(
+    const Texture& target, const RenderRect& src, const RenderRect& dst) const
+{
+    Render(target.texture_, src, dst);
+}
+
+void Texture::Render(
+    const Texture& target, const RenderRect& src, double dst_x,
+    double dst_y) const
+{
+    Render(target.texture_, src, dst_x, dst_y);
 }
 
 bool Texture::SetRenderTarget() const
