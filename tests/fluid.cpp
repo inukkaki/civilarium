@@ -39,13 +39,6 @@ constexpr int kWindowHeight = 32*16;
 constexpr int kFieldWidth = 128;
 constexpr int kFieldHeight = 64;
 
-constexpr double kZeroTolerance = 1e-15;
-
-bool EqualsZero(double x)
-{
-    return (-kZeroTolerance < x) && (x < kZeroTolerance);
-}
-
 class Fluid {
 public:
     Fluid(int width, int height, double density, double l, int n_iters,
@@ -72,6 +65,7 @@ public:
         }*/
         //vv_[h_/2][10] = 10.0;
         //vv_[h_/2][54] = -10.0;
+        /*
         for (int i = 1; i < h_ - 1; ++i) {
             for (int j = 1; j < w_ - 1; ++j) {
                 double rx = j - 40.0;
@@ -86,6 +80,8 @@ public:
             s_[0][j] = 0.0f;
             s_[h_ - 1][j] = 0.0f;
         }
+        */
+       vv_[h_/2][w_/2] = 10.0;
     }
 
     void SolveIncompressibility(double dt)
@@ -94,8 +90,9 @@ public:
 
         for (int iter = 0; iter < n_iters_; ++iter) {
             for (int i = 1; i < h_ - 1; ++i) {
-                for (int j = 1; j < w_ - 1; ++j) {
-                    if (EqualsZero(s_[i][j])) {
+                int offset = i % 2;
+                for (int j = 1 + offset; j < w_ - 1; j += 2) {
+                    if (impl::epsilon::EqualsZero(s_[i][j])) {
                         continue;
                     }
 
@@ -104,7 +101,36 @@ public:
                     double sx1 = s_[i][j + 1];
                     double sy1 = s_[i + 1][j];
                     double s = sy0 + sx0 + sx1 + sy1;
-                    if (EqualsZero(s)) {
+                    if (impl::epsilon::EqualsZero(s)) {
+                        continue;
+                    }
+
+                    double div = (
+                        -vh_[i][j] - vv_[i][j] + vv_[i][j + 1]
+                        + vh_[i + 1][j]);
+
+                    double p = -div/s;
+                    p *= sor_value_;
+                    p_[i][j] += coeff_p*p;
+
+                    vh_[i][j] -= p*sy0;
+                    vv_[i][j] -= p*sx0;
+                    vv_[i][j + 1] += p*sx1;
+                    vh_[i + 1][j] += p*sy1;
+                }
+
+                offset = (i + 1) % 2;
+                for (int j = 1 + offset; j < w_ - 1; j += 2) {
+                    if (impl::epsilon::EqualsZero(s_[i][j])) {
+                        continue;
+                    }
+
+                    double sy0 = s_[i - 1][j];
+                    double sx0 = s_[i][j - 1];
+                    double sx1 = s_[i][j + 1];
+                    double sy1 = s_[i + 1][j];
+                    double s = sy0 + sx0 + sx1 + sy1;
+                    if (impl::epsilon::EqualsZero(s)) {
                         continue;
                     }
 
@@ -161,8 +187,8 @@ public:
         for (int i = 1; i < h_ - 1; ++i) {
             for (int j = 1; j < w_ - 1; ++j) {
                 // vv
-                if (!EqualsZero(s_[i][j])
-                        && !EqualsZero(s_[i][j - 1])) {
+                if (!impl::epsilon::EqualsZero(s_[i][j])
+                        && !impl::epsilon::EqualsZero(s_[i][j - 1])) {
                     double x = j*l_;
                     double y = i*l_ + l2;
                     double vv = vv_[i][j];
@@ -184,8 +210,8 @@ public:
                 }
 
                 // vh
-                if (!EqualsZero(s_[i][j])
-                        && !EqualsZero(s_[i - 1][j])) {
+                if (!impl::epsilon::EqualsZero(s_[i][j])
+                        && !impl::epsilon::EqualsZero(s_[i - 1][j])) {
                     double x = j*l_ + l2;
                     double y = i*l_;
                     double vv = AverageVv(i, j);
@@ -220,8 +246,8 @@ public:
 
         for (int i = 1; i < h_ - 1; ++i) {
             for (int j = 1; j < w_ - 1; ++j) {
-                if (!EqualsZero(s_[i][j])
-                        && !EqualsZero(s_[i][j - 1])) {
+                if (!impl::epsilon::EqualsZero(s_[i][j])
+                        && !impl::epsilon::EqualsZero(s_[i][j - 1])) {
                     double x = j*l_ + l2;
                     double y = i*l_ + l2;
                     double vv = (vv_[i][j] + vv_[i][j + 1])/2;
@@ -250,12 +276,14 @@ public:
 
     void Simulate(double dt)
     {
+        /*
         for (int i = 1; i < h_ - 1; ++i) {
             vv_[i][1] = 1.0;
             if ((h_/2 - 5 < i) && (i < h_/2 + 5)) {
                 m_[i][1] = 100.0;
             }
         }
+        */
         SolveIncompressibility(dt);
         Extrapolate();
         AdvectVelocity(dt);
@@ -266,8 +294,8 @@ public:
     {
         for (int i = 0; i < h_; ++i) {
             for (int j = 0; j < w_; ++j) {
-                double min_p = -100000.0;
-                double max_p = 100000.0;
+                double min_p = -10.0;
+                double max_p = 10.0;
                 double val = (std::clamp(p_[i][j], min_p, max_p) - min_p)/(
                     max_p - min_p);
                 int lvl = static_cast<int>(val/0.25);
@@ -311,7 +339,7 @@ public:
     void RenderVelocity(const impl::texture::Texture& texture) const
     {
         texture.Clear(0x00, 0x00, 0x00, 0x00);
-        texture.SetDrawColor(0xff, 0xff, 0x00, 0xff);
+        texture.SetDrawColor(0x00, 0x00, 0x00, 0xff);
         for (int i = 0; i < h_; ++i) {
             for (int j = 0; j < w_; ++j) {
                 impl::vector::Vector2D v;
@@ -438,9 +466,9 @@ void main_routine(SDL_Window* window, SDL_Renderer* renderer)
         fluid.RenderPressure(p_texture);
         fluid.RenderSmoke(m_texture);
         fluid.RenderVelocity(v_texture);
-        //p_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
-        m_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
-        //v_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
+        p_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
+        //m_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
+        v_texture.Render(nullptr, fluid_rect, 0.0f, 0.0f);
 
         // Update the window
         SDL_RenderPresent(renderer);

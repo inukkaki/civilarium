@@ -4,17 +4,17 @@
 namespace civilarium::math::vector {
 
 struct Vector2D {
-    float x;
-    float y;
+    double x;
+    double y;
 
-    Vector2D() : x(0.0f), y(0.0f) {}
-    Vector2D(float x, float y) : x(x), y(y) {}
+    Vector2D() : x(0.0), y(0.0) {}
+    Vector2D(double x, double y) : x(x), y(y) {}
     Vector2D(const Vector2D&) = default;
 
     void Zero();
-    void Set(float x, float y);
+    void Set(double x, double y);
 
-    float Length() const;
+    double Length() const;
 
     bool ParallelTo(const Vector2D& other) const;
 
@@ -24,8 +24,8 @@ struct Vector2D {
 
     Vector2D& operator+=(const Vector2D& rhs);
     Vector2D& operator-=(const Vector2D& rhs);
-    Vector2D& operator*=(float rhs);
-    Vector2D& operator/=(float rhs);
+    Vector2D& operator*=(double rhs);
+    Vector2D& operator/=(double rhs);
 };
 
 Vector2D operator+(const Vector2D& v);
@@ -33,14 +33,14 @@ Vector2D operator-(const Vector2D& v);
 
 Vector2D operator+(const Vector2D& lhs, const Vector2D& rhs);
 Vector2D operator-(const Vector2D& lhs, const Vector2D& rhs);
-Vector2D operator*(float lhs, const Vector2D& rhs);
-Vector2D operator*(const Vector2D& lhs, float rhs);
-Vector2D operator/(const Vector2D& lhs, float rhs);
+Vector2D operator*(double lhs, const Vector2D& rhs);
+Vector2D operator*(const Vector2D& lhs, double rhs);
+Vector2D operator/(const Vector2D& lhs, double rhs);
 
-float Dot(const Vector2D& v);
-float Dot(const Vector2D& lhs, const Vector2D& rhs);
+double Dot(const Vector2D& v);
+double Dot(const Vector2D& lhs, const Vector2D& rhs);
 
-float CrossZ(const Vector2D& lhs, const Vector2D& rhs);
+double CrossZ(const Vector2D& lhs, const Vector2D& rhs);
 
 }  // namespace civilarium::math::vector
 

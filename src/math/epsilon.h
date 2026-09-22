@@ -3,9 +3,9 @@
 
 namespace civilarium::math::epsilon {
 
-inline constexpr float kZeroTolerance = 1e-6f;
+inline constexpr double kZeroTolerance = 1e-15;
 
-bool EqualsZero(float x);
+bool EqualsZero(double x);
 
 }  // namespace civilarium::math::epsilon
 

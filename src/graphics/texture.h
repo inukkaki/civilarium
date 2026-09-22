@@ -44,7 +44,7 @@ public:
         const RenderRect& dst) const;
     void Render(
         SDL_Texture* target, const RenderRect& src,
-        float dst_x, float dst_y) const;
+        double dst_x, double dst_y) const;
 
     bool SetRenderTarget() const;
 
@@ -53,10 +53,10 @@ public:
     void Clear() const;
     void Clear(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const;
 
-    void DrawPoint(float x, float y) const;
-    void DrawLine(float x1, float y1, float x2, float y2) const;
-    void DrawRect(float x, float y, float w, float h) const;
-    void FillRect(float x, float y, float w, float h) const;
+    void DrawPoint(double x, double y) const;
+    void DrawLine(double x1, double y1, double x2, double y2) const;
+    void DrawRect(double x, double y, double w, double h) const;
+    void FillRect(double x, double y, double w, double h) const;
 
     void DrawVector(
         const impl::vector::Vector2D& v,

@@ -62,10 +62,10 @@ void Texture::Render(
 }
 
 void Texture::Render(
-    SDL_Texture* target, const RenderRect& src, float dst_x, float dst_y) const
+    SDL_Texture* target, const RenderRect& src, double dst_x, double dst_y) const
 {
     RenderRect dst(
-        static_cast<int>(dst_x + 0.5f), static_cast<int>(dst_y + 0.5f),
+        static_cast<int>(dst_x + 0.5), static_cast<int>(dst_y + 0.5),
         src.w, src.h);
     Render(target, src, dst);
 }
@@ -101,32 +101,39 @@ void Texture::Clear(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const
     Clear();
 }
 
-void Texture::DrawPoint(float x, float y) const
+void Texture::DrawPoint(double x, double y) const
 {
     if (SetRenderTarget()) {
-        SDL_RenderDrawPointF(renderer_, x, y);
+        SDL_RenderDrawPointF(
+            renderer_, static_cast<float>(x), static_cast<float>(y));
     }
 }
 
-void Texture::DrawLine(float x1, float y1, float x2, float y2) const
+void Texture::DrawLine(double x1, double y1, double x2, double y2) const
 {
     if (SetRenderTarget()) {
-        SDL_RenderDrawLine(renderer_, x1, y1, x2, y2);
+        SDL_RenderDrawLineF(
+            renderer_, static_cast<float>(x1), static_cast<float>(y1),
+            static_cast<float>(x2), static_cast<float>(y2));
     }
 }
 
-void Texture::DrawRect(float x, float y, float w, float h) const
+void Texture::DrawRect(double x, double y, double w, double h) const
 {
     if (SetRenderTarget()) {
-        SDL_FRect rect = {x, y, w, h};
+        SDL_FRect rect = {
+            static_cast<float>(x), static_cast<float>(y),
+            static_cast<float>(w), static_cast<float>(h)};
         SDL_RenderDrawRectF(renderer_, &rect);
     }
 }
 
-void Texture::FillRect(float x, float y, float w, float h) const
+void Texture::FillRect(double x, double y, double w, double h) const
 {
     if (SetRenderTarget()) {
-        SDL_FRect rect = {x, y, w, h};
+        SDL_FRect rect = {
+            static_cast<float>(x), static_cast<float>(y),
+            static_cast<float>(w), static_cast<float>(h)};
         SDL_RenderFillRectF(renderer_, &rect);
     }
 }

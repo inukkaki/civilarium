@@ -14,17 +14,17 @@ namespace epsilon = civilarium::math::epsilon;
 
 void Vector2D::Zero()
 {
-    x = 0.0f;
-    y = 0.0f;
+    x = 0.0;
+    y = 0.0;
 }
 
-void Vector2D::Set(float x, float y)
+void Vector2D::Set(double x, double y)
 {
     this->x = x;
     this->y = y;
 }
 
-float Vector2D::Length() const
+double Vector2D::Length() const
 {
     return std::sqrt(x*x + y*y);
 }
@@ -36,8 +36,8 @@ bool Vector2D::ParallelTo(const Vector2D& other) const
 
 void Vector2D::FlushToZero()
 {
-    if (impl::epsilon::EqualsZero(x)) { x = 0.0f; }
-    if (impl::epsilon::EqualsZero(y)) { y = 0.0f; }
+    if (impl::epsilon::EqualsZero(x)) { x = 0.0; }
+    if (impl::epsilon::EqualsZero(y)) { y = 0.0; }
 }
 
 Vector2D& Vector2D::operator=(const Vector2D& rhs)
@@ -61,14 +61,14 @@ Vector2D& Vector2D::operator-=(const Vector2D& rhs)
     return *this;
 }
 
-Vector2D& Vector2D::operator*=(float rhs)
+Vector2D& Vector2D::operator*=(double rhs)
 {
     x *= rhs;
     y *= rhs;
     return *this;
 }
 
-Vector2D& Vector2D::operator/=(float rhs)
+Vector2D& Vector2D::operator/=(double rhs)
 {
     x /= rhs;
     y /= rhs;
@@ -99,35 +99,35 @@ Vector2D operator-(const Vector2D& lhs, const Vector2D& rhs)
     return tmp;
 }
 
-Vector2D operator*(float lhs, const Vector2D& rhs)
+Vector2D operator*(double lhs, const Vector2D& rhs)
 {
     Vector2D tmp(lhs*rhs.x, lhs*rhs.y);
     return tmp;
 }
 
-Vector2D operator*(const Vector2D& lhs, float rhs)
+Vector2D operator*(const Vector2D& lhs, double rhs)
 {
     Vector2D tmp(lhs.x*rhs, lhs.y*rhs);
     return tmp;
 }
 
-Vector2D operator/(const Vector2D& lhs, float rhs)
+Vector2D operator/(const Vector2D& lhs, double rhs)
 {
     Vector2D tmp(lhs.x/rhs, lhs.y/rhs);
     return tmp;
 }
 
-float Dot(const Vector2D& v)
+double Dot(const Vector2D& v)
 {
     return v.x*v.x + v.y*v.y;
 }
 
-float Dot(const Vector2D& lhs, const Vector2D& rhs)
+double Dot(const Vector2D& lhs, const Vector2D& rhs)
 {
     return lhs.x*rhs.x + lhs.y*rhs.y;
 }
 
-float CrossZ(const Vector2D& lhs, const Vector2D& rhs)
+double CrossZ(const Vector2D& lhs, const Vector2D& rhs)
 {
     return lhs.x*rhs.y - lhs.y*rhs.x;
 }
