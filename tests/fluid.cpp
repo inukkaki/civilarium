@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <vector>
 
 #include <SDL2/SDL.h>
@@ -65,7 +66,6 @@ public:
         }*/
         //vv_[h_/2][10] = 10.0;
         //vv_[h_/2][54] = -10.0;
-        /*
         for (int i = 1; i < h_ - 1; ++i) {
             for (int j = 1; j < w_ - 1; ++j) {
                 double rx = j - 40.0;
@@ -80,8 +80,6 @@ public:
             s_[0][j] = 0.0f;
             s_[h_ - 1][j] = 0.0f;
         }
-        */
-       vv_[h_/2][w_/2] = 10.0;
     }
 
     void SolveIncompressibility(double dt)
@@ -276,14 +274,13 @@ public:
 
     void Simulate(double dt)
     {
-        /*
         for (int i = 1; i < h_ - 1; ++i) {
             vv_[i][1] = 1.0;
             if ((h_/2 - 5 < i) && (i < h_/2 + 5)) {
                 m_[i][1] = 100.0;
             }
         }
-        */
+        p_.assign(h_, std::vector<double>(w_, 0.0));
         SolveIncompressibility(dt);
         Extrapolate();
         AdvectVelocity(dt);
@@ -292,10 +289,22 @@ public:
 
     void RenderPressure(const impl::texture::Texture& texture) const
     {
+        double min_p = std::numeric_limits<double>::max();
+        double max_p = std::numeric_limits<double>::min();
+        for (const auto& row : p_) {
+            double tmp_min = *std::min_element(row.begin(), row.end());
+            double tmp_max = *std::max_element(row.begin(), row.end());
+            if (tmp_min < min_p) {
+                min_p = tmp_min;
+            }
+            if (max_p < tmp_max) {
+                max_p = tmp_max;
+            }
+        }
+        std::cout << min_p << " ~ " << max_p << std::endl;
+
         for (int i = 0; i < h_; ++i) {
             for (int j = 0; j < w_; ++j) {
-                double min_p = -10.0;
-                double max_p = 10.0;
                 double val = (std::clamp(p_[i][j], min_p, max_p) - min_p)/(
                     max_p - min_p);
                 int lvl = static_cast<int>(val/0.25);
@@ -466,8 +475,8 @@ void main_routine(SDL_Window* window, SDL_Renderer* renderer)
         fluid.RenderSmoke(m_texture);
         fluid.RenderVelocity(v_texture);
         p_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
-        //m_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
-        v_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
+        m_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
+        //v_texture.Render(main_texture, fluid_rect, 0.0, 0.0);
 
         // Update the window
         main_texture.Render(nullptr, src_rect, 0.0, 0.0);
